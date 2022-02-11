@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import argparse
 import os
@@ -7,6 +7,7 @@ import glob
 import tarfile
 import time as tm
 import subprocess
+#import pyautogui
 
 def extract_time(file):
     if file.endswith('tar.gz'):
@@ -105,7 +106,7 @@ def main():
 
     for time in times:
         if not args.gfile:
-            time_str = str(long(round(time*1000.)))
+            time_str = str(int(round(time*1000.)))
             gfile = 'g'+re.match('^\d+',args.runid).group(0)+'.'+('0'*(5-len(time_str)))+time_str
         else:
             gfile = args.gfile
@@ -136,7 +137,6 @@ def main():
                          %(nc)s
                          %(gfile)s
                          q
-                         q
                        """%args_dict
 
         trxpl_script = "\n".join([line.lstrip() for line in trxpl_script.splitlines()])
@@ -147,8 +147,13 @@ def main():
             print('GEQDSK file: '+gfile+'\n')
 
         if not args.debug:
-            proc = subprocess.Popen('trxpl',stdin=subprocess.PIPE,stdout=subprocess.PIPE)
-            out, err = proc.communicate(input=trxpl_script)
+            #proc = subprocess.Popen('trxpl',stdin=subprocess.PIPE,stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+            #proc.wait()
+            #out, err = proc.communicate(input=b'q')#trxpl_script.encode())
+            #print(out)
+            proc = subprocess.Popen('trxpl',stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,shell=True)
+            out, err = proc.communicate(input=b'p\n')#trxpl_script.encode())
+            #pyautogui.typewrite('Hello world!\n', interval=0.1)
         else:
             print(trxpl_script)
 
